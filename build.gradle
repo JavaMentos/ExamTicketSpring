@@ -1,0 +1,27 @@
+plugins {
+    id 'java'
+}
+
+group 'ru.home.examticketspring'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation "org.springframework.boot:spring-boot-devtools:${springDevtools}"
+    implementation "org.springframework.boot:spring-boot-starter:${springStarter}"
+    implementation "org.telegram:telegrambots-spring-boot-starter:${telegrambotsSpring}"
+    implementation "org.projectlombok:lombok:${lombok}"
+    implementation "org.springframework.boot:spring-boot-starter-data-jpa:${springDataJpa}"
+    implementation "org.postgresql:postgresql:${postgresql}"
+
+    testImplementation "org.springframework.boot:spring-boot-starter-test:${springStarterTest}"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:${junitJupiter}"
+
+}
+
+test {
+    useJUnitPlatform()
+}
