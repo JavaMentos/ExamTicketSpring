@@ -1,5 +1,7 @@
 plugins {
     id 'java'
+    id 'org.springframework.boot' version '2.5.5'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 }
 
 group 'ru.home.examticketspring'
@@ -7,6 +9,16 @@ version '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
+}
+
+springBoot {
+    mainClass = 'ru.home.examticketspring.ExamTicketSpringApplication'
+}
+
+// Замените блок jar на этот блок bootJar
+bootJar {
+    archiveBaseName = 'ExamTicketSpring'
+    archiveVersion = '1.0-SNAPSHOT'
 }
 
 dependencies {
@@ -24,4 +36,8 @@ dependencies {
 
 test {
     useJUnitPlatform()
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
 }

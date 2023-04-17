@@ -4,7 +4,7 @@ import ru.home.examticketspring.model.ExamTicket;
 
 import java.util.Optional;
 
-public interface ExamTicketService {
+public interface TicketService {
     long count();
-    Optional<ExamTicket> findById(Long id);
+    Optional<ExamTicket> findById(long id);
 }
