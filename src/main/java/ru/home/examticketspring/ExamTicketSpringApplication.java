@@ -12,3 +12,6 @@ public class ExamTicketSpringApplication {
         SpringApplication.run(ExamTicketSpringApplication.class, args);
     }
 }
+
+//TODO Релизовать вытаскивания вопроса по номеру, сначала делается запрос к бд, на количество строчек.
+//TODO Отредактировать вопросы. Должно быть номер вопроса, тема вопроса, сам вопрос.

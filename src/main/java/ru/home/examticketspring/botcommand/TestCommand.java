@@ -1,23 +1,40 @@
 package ru.home.examticketspring.botcommand;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import ru.home.examticketspring.impl.TelegramServiceImpl;
+import ru.home.examticketspring.model.ExamTicket;
+import ru.home.examticketspring.service.TicketService;
 
+import java.util.Optional;
 import java.util.function.Consumer;
 
-@Component
+@Service
 public class TestCommand implements Consumer<Message> {
 
-    @Autowired
-    @Lazy
-    private TelegramServiceImpl telegramService;
+    private final TelegramServiceImpl telegramService;
+    private final TicketService ticketService;
+
+    public TestCommand(@Lazy TelegramServiceImpl telegramService, TicketService ticketService) {
+        this.telegramService = telegramService;
+        this.ticketService = ticketService;
+    }
 
     @Override
     public void accept(Message message) {
         String text = String.format("test command correct");
-        telegramService.sendTextMessage(text, String.valueOf(message.getChatId()));
-    }
+        for (int i = 1; i <= 23; i++) {
+
+
+            Optional<ExamTicket> byId = ticketService.findById(i);
+            telegramService.sendTextMessage(byId.get().getFullAnswer(), String.valueOf(message.getChatId()));
+            System.out.println(i);
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        }
 }
