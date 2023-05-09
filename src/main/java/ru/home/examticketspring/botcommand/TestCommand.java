@@ -23,7 +23,6 @@ public class TestCommand implements Consumer<Message> {
 
     @Override
     public void accept(Message message) {
-        String text = String.format("test command correct");
 
         Optional<ExamTicket> byId = ticketService.findById(3);
 

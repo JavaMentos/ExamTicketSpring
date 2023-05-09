@@ -1,6 +1,5 @@
 package ru.home.examticketspring.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.home.examticketspring.repository.ExamTicketRepository;
 import ru.home.examticketspring.service.TicketService;
