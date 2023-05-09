@@ -24,17 +24,21 @@ public class TestCommand implements Consumer<Message> {
     @Override
     public void accept(Message message) {
         String text = String.format("test command correct");
-        for (int i = 1; i <= 23; i++) {
 
+        Optional<ExamTicket> byId = ticketService.findById(3);
 
-            Optional<ExamTicket> byId = ticketService.findById(i);
-            telegramService.sendTextMessage(byId.get().getFullAnswer(), String.valueOf(message.getChatId()));
-            System.out.println(i);
-            try {
-                Thread.sleep(3000);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }
+        telegramService.sendQuizPoll(byId.get(), message.getChatId().toString());
+//        for (int i = 1; i <= 23; i++) {
+//
+//
+//            Optional<ExamTicket> byId = ticketService.findById(i);
+//            telegramService.sendTextMessage(byId.get().getFullAnswer(), String.valueOf(message.getChatId()));
+//            System.out.println(i);
+//            try {
+//                Thread.sleep(3000);
+//            } catch (InterruptedException e) {
+//                throw new RuntimeException(e);
+//            }
+//        }
         }
 }

@@ -10,9 +10,9 @@ import java.util.Random;
 
 @Service
 public class ProcessingServiceImpl implements ProcessingService {
-    private TicketService ticketService;
+    private final TicketService ticketService;
 
-    ProcessingServiceImpl(TicketService ticketService){
+    public ProcessingServiceImpl(TicketService ticketService){
         this.ticketService = ticketService;
     }
 

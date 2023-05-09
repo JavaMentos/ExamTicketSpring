@@ -10,8 +10,11 @@ import java.util.Optional;
 
 @Service
 public class TicketServiceImpl implements TicketService {
-    @Autowired
-    private ExamTicketRepository examTicketRepository;
+    private final ExamTicketRepository examTicketRepository;
+
+    public TicketServiceImpl(ExamTicketRepository examTicketRepository) {
+        this.examTicketRepository = examTicketRepository;
+    }
 
     @Override
     public long count() {

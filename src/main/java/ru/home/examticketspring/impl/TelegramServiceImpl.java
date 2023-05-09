@@ -19,8 +19,7 @@ import ru.home.examticketspring.model.TelegramUser;
 import ru.home.examticketspring.service.TelegramService;
 import ru.home.examticketspring.service.UserService;
 
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.function.Consumer;
 
 @Service
@@ -105,16 +104,23 @@ public class TelegramServiceImpl extends TelegramLongPollingBot implements Teleg
     public void sendQuizPoll(ExamTicket examTicket, String chatId) {
         String pollType = "quiz";
 
+        List<String> answers = new ArrayList<>();
+
+        answers.add(examTicket.getAnswer1());
+        answers.add(examTicket.getAnswer2());
+        answers.add(examTicket.getAnswer3());
+        answers.add(examTicket.getAnswer4());
+
+        Collections.shuffle(answers);
+
+        int correctAnswer = answers.indexOf(examTicket.getRightAnswer());
+
         SendPoll poll = new SendPoll();
         poll.setChatId(chatId);
         poll.setQuestion(examTicket.getQuestion());
-        poll.setOptions(List.of(
-                examTicket.getAnswer1(),
-                examTicket.getAnswer2(),
-                examTicket.getAnswer3(),
-                examTicket.getAnswer4()
-        ));
-        poll.setCorrectOptionId(examTicket.getCorrectAnswer() - 1);
+        poll.setOptions(answers);
+
+        poll.setCorrectOptionId(correctAnswer);
         poll.setType(pollType);
         poll.setExplanation(examTicket.getRightAnswer());
 

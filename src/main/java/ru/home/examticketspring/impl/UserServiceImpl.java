@@ -11,8 +11,11 @@ import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
-    @Autowired
-    private TelegramUserRepository telegramUserRepository;
+    private final TelegramUserRepository telegramUserRepository;
+
+    public UserServiceImpl(TelegramUserRepository telegramUserRepository) {
+        this.telegramUserRepository = telegramUserRepository;
+    }
 
     @Override
     public void addUser(TelegramUser telegramUser) {
