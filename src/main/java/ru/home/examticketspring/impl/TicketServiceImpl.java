@@ -1,5 +1,6 @@
 package ru.home.examticketspring.impl;
 
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import ru.home.examticketspring.repository.ExamTicketRepository;
 import ru.home.examticketspring.service.TicketService;
@@ -15,6 +16,7 @@ public class TicketServiceImpl implements TicketService {
         this.examTicketRepository = examTicketRepository;
     }
 
+    @CacheEvict(value = "rowCountCache", allEntries = true)
     @Override
     public long count() {
         return examTicketRepository.count();

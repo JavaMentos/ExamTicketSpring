@@ -1,6 +1,7 @@
 package ru.home.examticketspring.model;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "telegram_users")
@@ -16,6 +17,10 @@ public class TelegramUser {
     private String firstName;
     @Column(name = "last_name")
     private String lastName;
+    @Column(name = "local_date")
+    private LocalDate localDate;
+    @Column(name = "counter")
+    private Integer counter;
 
     public Long getUserId() {
         return userId;
@@ -47,5 +52,21 @@ public class TelegramUser {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public LocalDate getLocalDate() {
+        return localDate;
+    }
+
+    public void setLocalDate(LocalDate localDate) {
+        this.localDate = localDate;
+    }
+
+    public int getCounter() {
+        return counter;
+    }
+
+    public void setCounter(int counter) {
+        this.counter = counter;
     }
 }

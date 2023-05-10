@@ -30,6 +30,7 @@ public class GetDetailedTicket implements Consumer<Message> {
         String fullAnswer = examTicket.getFullAnswer();
         String questionTopic = examTicket.getQuestionTopic();
         String question = examTicket.getQuestion();
-        return String.format("Тема - %s\n\nВопрос - %s\n\nОтвет\n%s",questionTopic,question,fullAnswer);
+        long id = examTicket.getId();
+        return String.format("№ %d \nТема - %s\n\nВопрос - %s\n\nОтвет\n%s",id,questionTopic,question,fullAnswer);
     }
 }

@@ -7,19 +7,12 @@ import org.telegram.telegrambots.meta.api.methods.polls.SendPoll;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import ru.home.examticketspring.botcommand.ExamTest;
-import ru.home.examticketspring.botcommand.GetChatId;
-import ru.home.examticketspring.botcommand.GetDetailedTicket;
-import ru.home.examticketspring.botcommand.TestCommand;
 import ru.home.examticketspring.model.ExamTicket;
-import ru.home.examticketspring.model.TelegramUser;
+import ru.home.examticketspring.service.IncomingMessageService;
 import ru.home.examticketspring.service.TelegramService;
-import ru.home.examticketspring.service.UserService;
 
 import java.util.*;
-import java.util.function.Consumer;
 
 @Service
 public class TelegramServiceImpl extends TelegramLongPollingBot implements TelegramService {
@@ -29,66 +22,23 @@ public class TelegramServiceImpl extends TelegramLongPollingBot implements Teleg
     private String userName;
     @Value("${bot.token}")
     private String token;
-    private final UserService userService;
-    private final List<Long> listUserId;
+    private final IncomingMessageService incomingMessage;
 
-    private final HashMap<String, Consumer<Message>> commandMap = new HashMap<>();
-
-    public TelegramServiceImpl(TestCommand testCommand,
-                               GetChatId getChatId,
-                               ExamTest examTest,
-                               GetDetailedTicket getDetailedTicket,
-                               UserService userService) {
-        commandMap.put("/testcommand", testCommand);
-        commandMap.put("/getchatid", getChatId);
-        commandMap.put("/examtest", examTest);
-        commandMap.put("/getdetailedticket", getDetailedTicket);
-        this.userService = userService;
-
-        listUserId = userService.getAllUserId();
+    public TelegramServiceImpl(IncomingMessageService incomingMessage) {
+        this.incomingMessage = incomingMessage;
     }
-
     @Override
     public void onUpdateReceived(Update update) {
         Message message = update.getMessage();
 
         if (update.hasMessage() && message.hasText()) {
-            Long id = message.getFrom().getId();
 
-            if (!listUserId.contains(id)) {
-                User from = message.getFrom();
-                TelegramUser newUser = new TelegramUser();
-                newUser.setUserId(from.getId());
-
-                String userName = replaceNullOrEmptyWithUnknown(from.getUserName());
-                newUser.setUsername(userName);
-
-                String firstName = replaceNullOrEmptyWithUnknown(from.getFirstName());
-                newUser.setFirstName(firstName);
-
-                String lastName = replaceNullOrEmptyWithUnknown(from.getLastName());
-                newUser.setLastName(lastName);
-
-                listUserId.add(from.getId());
-                userService.addUser(newUser);
-
-                sendTextMessage(createWelcomeMessage(),String.valueOf(message.getChatId()));
-            }
-
-            String textHasMessage = message.getText().replace(getBotUsername(), "");
-
-            Consumer<Message> messageConsumer = commandMap.get(textHasMessage);
-
-            if (messageConsumer != null) {
-                messageConsumer.accept(message);
-            }
+            incomingMessage.handleMessage(update);
 
         }
     }
 
-    private String replaceNullOrEmptyWithUnknown(String field) {
-        return field == null || field.isEmpty() ? "unknown" : field;
-    }
+
 
     @Override
     public String getBotUsername() {
@@ -116,7 +66,7 @@ public class TelegramServiceImpl extends TelegramLongPollingBot implements Teleg
 
         SendPoll poll = new SendPoll();
         poll.setChatId(chatId);
-        poll.setQuestion(examTicket.getQuestion());
+        poll.setQuestion("№"+examTicket.getId()+". "+examTicket.getQuestion());
         poll.setOptions(answers);
 
         poll.setCorrectOptionId(correctAnswer);
