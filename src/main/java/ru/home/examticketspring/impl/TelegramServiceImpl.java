@@ -19,7 +19,7 @@ public class TelegramServiceImpl extends TelegramLongPollingBot implements Teleg
     @Value("${bot.parseMode}")
     private String parseMode;
     @Value("${bot.userName}")
-    private String userName;
+    private String botName;
     @Value("${bot.token}")
     private String token;
     private final IncomingMessageService incomingMessage;
@@ -32,17 +32,13 @@ public class TelegramServiceImpl extends TelegramLongPollingBot implements Teleg
         Message message = update.getMessage();
 
         if (update.hasMessage() && message.hasText()) {
-
             incomingMessage.handleMessage(update);
-
         }
     }
 
-
-
     @Override
     public String getBotUsername() {
-        return userName;
+        return botName;
     }
 
     @Override
@@ -66,7 +62,7 @@ public class TelegramServiceImpl extends TelegramLongPollingBot implements Teleg
 
         SendPoll poll = new SendPoll();
         poll.setChatId(chatId);
-        poll.setQuestion("№"+examTicket.getId()+". "+examTicket.getQuestion());
+        poll.setQuestion("№"+examTicket.getId()+"\n"+examTicket.getQuestion());
         poll.setOptions(answers);
 
         poll.setCorrectOptionId(correctAnswer);

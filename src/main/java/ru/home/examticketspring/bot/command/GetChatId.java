@@ -1,4 +1,4 @@
-package ru.home.examticketspring.botcommand;
+package ru.home.examticketspring.bot.command;
 
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -13,7 +13,6 @@ import java.util.function.Consumer;
  */
 @Service
 public class GetChatId implements Consumer<Message> {
-
     private final TelegramServiceImpl telegramService;
 
     public GetChatId(@Lazy TelegramServiceImpl telegramService) {
@@ -21,7 +20,7 @@ public class GetChatId implements Consumer<Message> {
     }
 
     /**
-     * Обрабатывает полученное сообщение и отправляет идентификатор чата и пользователя.
+     * Обрабатывает полученное сообщение и отправляет айди чата и пользователя.
      *
      * @param message принимает сообщение от пользователя
      */

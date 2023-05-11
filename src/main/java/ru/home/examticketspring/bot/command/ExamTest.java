@@ -1,4 +1,4 @@
-package ru.home.examticketspring.botcommand;
+package ru.home.examticketspring.bot.command;
 
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -11,7 +11,6 @@ import java.util.function.Consumer;
 
 @Service
 public class ExamTest implements Consumer<Message> {
-
     private final TelegramService telegramService;
     private final ProcessingService processingService;
 

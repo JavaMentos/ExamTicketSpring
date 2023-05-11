@@ -27,4 +27,12 @@ public class ProcessingServiceImpl implements ProcessingService {
         int count = (int) ticketService.count();
         return new Random().nextInt(count) + 1;
     }
+
+    public String formatExamTicket(ExamTicket examTicket) {
+        String fullAnswer = examTicket.getFullAnswer();
+        String questionTopic = examTicket.getQuestionTopic();
+        String question = examTicket.getQuestion();
+        long id = examTicket.getId();
+        return String.format("№%d \nТема - %s\n\nВопрос - %s\n\nОтвет\n%s",id,questionTopic,question,fullAnswer);
+    }
 }

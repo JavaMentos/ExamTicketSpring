@@ -1,4 +1,4 @@
-package ru.home.examticketspring.botcommand;
+package ru.home.examticketspring.bot.command;
 
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;

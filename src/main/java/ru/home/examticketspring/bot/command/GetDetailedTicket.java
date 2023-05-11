@@ -1,4 +1,4 @@
-package ru.home.examticketspring.botcommand;
+package ru.home.examticketspring.bot.command;
 
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -11,7 +11,6 @@ import java.util.function.Consumer;
 
 @Service
 public class GetDetailedTicket implements Consumer<Message> {
-
     private final TelegramService telegramService;
     private final ProcessingService processingService;
 
@@ -23,14 +22,7 @@ public class GetDetailedTicket implements Consumer<Message> {
     @Override
     public void accept(Message message) {
         ExamTicket randomTicket = processingService.getRandomTicket();
-        telegramService.sendTextMessage(formatExamTicket(randomTicket), String.valueOf(message.getChatId()));
-    }
-
-    private String formatExamTicket(ExamTicket examTicket) {
-        String fullAnswer = examTicket.getFullAnswer();
-        String questionTopic = examTicket.getQuestionTopic();
-        String question = examTicket.getQuestion();
-        long id = examTicket.getId();
-        return String.format("№ %d \nТема - %s\n\nВопрос - %s\n\nОтвет\n%s",id,questionTopic,question,fullAnswer);
+        String formattedText = processingService.formatExamTicket(randomTicket);
+        telegramService.sendTextMessage(formattedText, String.valueOf(message.getChatId()));
     }
 }
