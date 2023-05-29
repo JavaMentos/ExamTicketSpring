@@ -1,14 +1,21 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '2.5.5'
-    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'org.springframework.boot' version "${springStarter}"
+    id 'io.spring.dependency-management' version "${dependencyManagement}"
 }
 
 group 'ru.home.examticketspring'
 version '1.0-SNAPSHOT'
 
+sourceCompatibility = '17'
+targetCompatibility = '17'
+
 repositories {
     mavenCentral()
+}
+
+configurations {
+    all*.exclude module : 'spring-boot-starter-logging'
 }
 
 springBoot {
@@ -24,6 +31,9 @@ bootJar {
 dependencies {
     implementation "org.springframework.boot:spring-boot-devtools:${springDevtools}"
     implementation "org.springframework.boot:spring-boot-starter:${springStarter}"
+    implementation "org.springframework.boot:spring-boot-starter-web:${springStarter}"
+    implementation "org.springframework.boot:spring-boot-starter-actuator:${springBootStarterActuator}"
+    implementation "org.springframework.boot:spring-boot-starter-log4j2:${springStarter}"
     implementation "org.telegram:telegrambots-spring-boot-starter:${telegrambotsSpring}"
     annotationProcessor "org.projectlombok:lombok:${lombok}"
     compileOnly "org.projectlombok:lombok:${lombok}"
@@ -32,6 +42,9 @@ dependencies {
 
     testImplementation "org.springframework.boot:spring-boot-starter-test:${springStarterTest}"
     testImplementation "org.junit.jupiter:junit-jupiter-api:${junitJupiter}"
+    implementation "io.micrometer:micrometer-registry-prometheus:${micrometerRegistryPrometheus}"
+
+    implementation 'jakarta.persistence:jakarta.persistence-api:3.1.0'
 
 }
 

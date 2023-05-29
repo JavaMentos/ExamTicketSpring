@@ -6,9 +6,9 @@ create table public.telegram_users
     user_id    bigint
         constraint users_user_id_key
             unique,
-    user_name  varchar(255),
-    first_name varchar(255),
-    last_name  varchar(255),
+    user_name  varchar,
+    first_name varchar,
+    last_name  varchar,
     local_date date,
     counter    integer
 );
@@ -24,7 +24,7 @@ create table public.exam_tickets
     answer_3       varchar not null,
     answer_4       varchar not null,
     right_answer   varchar not null,
-    full_answer    varchar,
+    full_answer    varchar(2500),
     correct_answer integer
 );
 

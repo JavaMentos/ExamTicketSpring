@@ -1,5 +1,6 @@
 package ru.home.examticketspring.impl.handler;
 
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -15,10 +16,12 @@ import ru.home.examticketspring.service.*;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
 @Service
+@Log4j2
 public class IncomingMessageImpl implements IncomingMessageService {
     private final TelegramService telegramService;
     private final HashMap<String, Consumer<Message>> commandMap = new HashMap<>();
@@ -29,7 +32,7 @@ public class IncomingMessageImpl implements IncomingMessageService {
     private final TelegramBotState botState;
     private final TicketService ticketService;
     private final ProcessingService processingService;
-    public static final ConcurrentHashMap<Long, TelegramUser> statisticsUser = new ConcurrentHashMap<>();
+    public static final Map<Long, TelegramUser> statisticsUser = new ConcurrentHashMap<>();
 
     public IncomingMessageImpl(@Lazy TelegramService telegramService, TestCommand testCommand,
                                GetChatId getChatId,
@@ -65,25 +68,33 @@ public class IncomingMessageImpl implements IncomingMessageService {
 
         if (!listUserId.contains(userId)) {
             createNewUser(message.getFrom());
-            telegramService.sendTextMessage(telegramService.createWelcomeMessage(),String.valueOf(message.getChatId()));
+            telegramService.sendTextMessage(telegramService.createWelcomeMessage(), String.valueOf(message.getChatId()));
         }
 
         if (botState.getUserIdForState() == message.getFrom().getId()) {
             switch (botState.getState()) {
                 case AWAITING_ID:
 
-                    throwElseNotNumberOrNull(text);
+                    try {
+                        throwElseNotNumberOrNull(text);
 
-                    long rowsCount = ticketService.count();
-                    long idRecordFromUser = Long.parseLong(text);
+                        long rowsCount = ticketService.count();
+                        long idRecordFromUser = Long.parseLong(text);
 
-                    throwIfNumberIsNotInRange(rowsCount, idRecordFromUser);
+                        throwIfNumberIsNotInRange(rowsCount, idRecordFromUser);
 
-                    ExamTicket examTicket = ticketService.findById(idRecordFromUser).get();
-                    String formattedText = processingService.formatExamTicket(examTicket);
+                        ExamTicket examTicket = ticketService.findById(idRecordFromUser).get();
+                        String formattedText = processingService.formatExamTicket(examTicket);
 
-                    telegramService.sendTextMessage(formattedText, userId.toString());
-                    botState.stateNormal();
+                        telegramService.sendTextMessage(formattedText, userId.toString());
+                        botState.stateNormal();
+                        break;
+                    } catch (IllegalArgumentException e) {
+                        telegramService.sendTextMessage(e.getMessage(), userId.toString());
+                        botState.stateNormal();
+                    }
+
+                default:
                     break;
             }
         }
@@ -133,16 +144,20 @@ public class IncomingMessageImpl implements IncomingMessageService {
 
         listUserId.add(user.getId());
         userService.addUser(newUser);
+        log.info("Добавлен новый пользователь\n" + userName + "\n" + user.getId());
     }
 
     private void throwElseNotNumberOrNull(String text) {
         if (text == null || !text.matches("\\d+")) {
-            throw new IllegalArgumentException("Поддерживаются только цифры");
+            log.warn("Поддерживаются только цифры, ввели " + text);
+            throw new IllegalArgumentException("Поддерживаются только цифры, вы ввели " + text);
         }
     }
 
     private void throwIfNumberIsNotInRange(long rowsCount, long idRecordFromUser) {
-        if(idRecordFromUser > rowsCount || idRecordFromUser < 1)
-            throw new IllegalArgumentException("число должно быть положительным и не больше " + rowsCount);
+        if (idRecordFromUser > rowsCount || idRecordFromUser < 1) {
+            log.warn("Введено не корректное число, всего строк в бд " + rowsCount + ", введено " + idRecordFromUser);
+            throw new IllegalArgumentException("Число должно быть положительным и не больше " + rowsCount);
+        }
     }
 }

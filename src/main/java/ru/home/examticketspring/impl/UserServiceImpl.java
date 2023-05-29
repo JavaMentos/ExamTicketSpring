@@ -7,7 +7,6 @@ import ru.home.examticketspring.service.UserService;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -30,7 +29,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<Long> getAllUserId() {
         List<TelegramUser> allUsers = getAllUsers();
-        return allUsers.stream().map(TelegramUser::getUserId).collect(Collectors.toList());
+        return allUsers.stream().map(TelegramUser::getUserId).toList();
     }
 
     @Override

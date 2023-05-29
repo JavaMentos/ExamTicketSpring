@@ -9,12 +9,14 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 @EnableCaching
 public class ExamTicketSpringApplication {
-
     public static void main(String[] args) {
         SpringApplication.run(ExamTicketSpringApplication.class, args);
     }
+
+//    @Bean
+//    public TomcatServletWebServerFactory servletWebServerFactory() {
+//        return new TomcatServletWebServerFactory();
+//    }
 }
 
-//TODO добавить возможность вытаскивать по конкретные ответы по номеру вопроса или строки
-//TODO разобраться с логирование, начать обрабатывать ошибки
-//TODO разобраться с исключения, кроме логирования, нужно еще отправлять сообщение в чат
+//TODO начать писать документирование

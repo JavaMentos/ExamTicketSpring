@@ -1,8 +1,7 @@
 package ru.home.examticketspring.model;
 
+import jakarta.persistence.*;
 import lombok.Getter;
-
-import javax.persistence.*;
 
 @Entity
 @Getter
@@ -12,7 +11,7 @@ public class ExamTicket {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     @Column(name = "question_topic")
-    private String QuestionTopic;
+    private String questionTopic;
     @Column(name = "question")
     private String question;
     @Column(name = "answer_1")
@@ -25,7 +24,7 @@ public class ExamTicket {
     private String answer4;
     @Column(name = "right_answer")
     private String rightAnswer;
-    @Column(name = "full_answer")
+    @Column(name = "full_answer", length = 2500)
     private String fullAnswer;
     @Column(name = "correct_answer")
     private int correctAnswer;

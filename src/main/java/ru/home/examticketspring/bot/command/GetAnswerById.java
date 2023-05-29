@@ -1,5 +1,6 @@
 package ru.home.examticketspring.bot.command;
 
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -10,6 +11,7 @@ import ru.home.examticketspring.service.TelegramService;
 import java.util.function.Consumer;
 
 @Service
+@Log4j2
 public class GetAnswerById implements Consumer<Message> {
     private final TelegramBotState botState;
     private final TelegramService telegramService;
@@ -27,5 +29,6 @@ public class GetAnswerById implements Consumer<Message> {
         String command = message.getText().replace(botName, "").trim();
         botState.changeActivityState(command);
         telegramService.sendTextMessage("Введите номер вопроса", message.getChatId().toString());
+        log.info("Пользователь " + message.getFrom().getId() + " Выполнил команду " + this.getClass().getName());
     }
 }

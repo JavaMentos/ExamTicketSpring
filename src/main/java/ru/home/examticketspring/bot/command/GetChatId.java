@@ -1,5 +1,6 @@
 package ru.home.examticketspring.bot.command;
 
+import lombok.extern.log4j.Log4j2;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -12,6 +13,7 @@ import java.util.function.Consumer;
  * Реализует интерфейс Consumer<Message>.
  */
 @Service
+@Log4j2
 public class GetChatId implements Consumer<Message> {
     private final TelegramServiceImpl telegramService;
 
@@ -26,7 +28,8 @@ public class GetChatId implements Consumer<Message> {
      */
     @Override
     public void accept(Message message) {
-        String format = String.format("ID chat: %s \n User ID: %s", message.getChatId(), message.getFrom().getId());
+        String format = String.format("ID chat: %s %nUser ID: %s", message.getChatId(), message.getFrom().getId());
         telegramService.sendTextMessage(format, String.valueOf(message.getChatId()));
+        log.info("Пользователь " + message.getFrom().getId() + " Выполнил команду " + this.getClass().getName());
     }
 }

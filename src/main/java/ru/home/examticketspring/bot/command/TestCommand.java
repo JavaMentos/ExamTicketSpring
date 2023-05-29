@@ -23,10 +23,12 @@ public class TestCommand implements Consumer<Message> {
 
     @Override
     public void accept(Message message) {
+        String welcomeMessage = telegramService.createWelcomeMessage();
+        telegramService.sendTextMessage(welcomeMessage,message.getChatId().toString());
 
-        Optional<ExamTicket> byId = ticketService.findById(3);
-
-        telegramService.sendQuizPoll(byId.get(), message.getChatId().toString());
+//        Optional<ExamTicket> byId = ticketService.findById(3);
+//
+//        telegramService.sendQuizPoll(byId.get(), message.getChatId().toString());
 //        for (int i = 1; i <= 23; i++) {
 //
 //
