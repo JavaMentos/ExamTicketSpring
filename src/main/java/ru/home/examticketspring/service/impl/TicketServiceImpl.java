@@ -1,4 +1,4 @@
-package ru.home.examticketspring.impl;
+package ru.home.examticketspring.service.impl;
 
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;

@@ -1,25 +1,21 @@
 package ru.home.examticketspring.bot.command;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Message;
-import ru.home.examticketspring.impl.TelegramServiceImpl;
-import ru.home.examticketspring.model.ExamTicket;
-import ru.home.examticketspring.service.TicketService;
+import ru.home.examticketspring.service.TelegramService;
 
-import java.util.Optional;
 import java.util.function.Consumer;
 
 @Service
+@RequiredArgsConstructor
 public class TestCommand implements Consumer<Message> {
 
-    private final TelegramServiceImpl telegramService;
-    private final TicketService ticketService;
+    private final TelegramService telegramService;
+//    private final TicketService ticketService;
 
-    public TestCommand(@Lazy TelegramServiceImpl telegramService, TicketService ticketService) {
-        this.telegramService = telegramService;
-        this.ticketService = ticketService;
-    }
 
     @Override
     public void accept(Message message) {

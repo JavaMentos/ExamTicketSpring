@@ -1,9 +1,9 @@
-package ru.home.examticketspring.impl;
+package ru.home.examticketspring.service.impl;
 
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import ru.home.examticketspring.model.ExamTicket;
-import ru.home.examticketspring.service.ProcessingService;
+import ru.home.examticketspring.service.ProcessingMessageService;
 import ru.home.examticketspring.service.TicketService;
 
 import java.util.Optional;
@@ -11,19 +11,21 @@ import java.util.Random;
 
 @Service
 @Log4j2
-public class ProcessingServiceImpl implements ProcessingService {
+public class ProcessingMessageServiceImpl implements ProcessingMessageService {
     private final TicketService ticketService;
     private final Random random = new Random();
 
-    public ProcessingServiceImpl(TicketService ticketService) {
+    public ProcessingMessageServiceImpl(TicketService ticketService) {
         this.ticketService = ticketService;
     }
 
     public ExamTicket getRandomTicket() {
         int numberLine = randomNumber();
         Optional<ExamTicket> examTicket = ticketService.findById(numberLine);
-        if (examTicket.isPresent()) return examTicket.get();
-        else log.warn("при получении тикета из бд, произошла ошибка, номер строки " + numberLine);
+        if (examTicket.isPresent()) {
+            return examTicket.get();
+        }
+        log.error("при получении тикета из бд, произошла ошибка, номер строки " + numberLine);
         return null;
     }
 

@@ -1,8 +1,10 @@
-package ru.home.examticketspring.impl;
+package ru.home.examticketspring.service.impl;
 
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Controller;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.polls.SendPoll;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -13,9 +15,11 @@ import ru.home.examticketspring.model.ExamTicket;
 import ru.home.examticketspring.service.IncomingMessageService;
 import ru.home.examticketspring.service.TelegramService;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
-@Controller
+@Service
 @Log4j2
 public class TelegramServiceImpl extends TelegramLongPollingBot implements TelegramService {
     @Value("${bot.parseMode}")
@@ -24,19 +28,21 @@ public class TelegramServiceImpl extends TelegramLongPollingBot implements Teleg
     private String botName;
     @Value("${bot.token}")
     private String token;
-    private final IncomingMessageService incomingMessage;
+    private IncomingMessageService incomingMessage;
 
-    public TelegramServiceImpl(IncomingMessageService incomingMessage) {
+    @Autowired
+    @Lazy
+    public void setIncomingMessage(IncomingMessageService incomingMessage) {
         this.incomingMessage = incomingMessage;
     }
 
     @Override
     public void onUpdateReceived(Update update) {
         Message message = update.getMessage();
-        log.info(message.getFrom().getUserName() + " - начал взаимодействие с ботом. Текст: " + message.getText());
 
         if (update.hasMessage() && message.hasText()) {
-            incomingMessage.handleMessage(update);
+            incomingMessage.handlerMessage(update);
+            log.info(message.getFrom().getUserName() + " - начал взаимодействие с ботом. Текст: " + message.getText());
         }
     }
 
@@ -54,7 +60,6 @@ public class TelegramServiceImpl extends TelegramLongPollingBot implements Teleg
         String pollType = "quiz";
 
         List<String> answers = new ArrayList<>();
-
         answers.add(examTicket.getAnswer1());
         answers.add(examTicket.getAnswer2());
         answers.add(examTicket.getAnswer3());
@@ -64,11 +69,12 @@ public class TelegramServiceImpl extends TelegramLongPollingBot implements Teleg
 
         int correctAnswer = answers.indexOf(examTicket.getRightAnswer());
 
+        String formatQuestion = String.format("№ %d%n%s", examTicket.getId(), examTicket.getQuestion());
+
         SendPoll poll = new SendPoll();
         poll.setChatId(chatId);
-        poll.setQuestion("№" + examTicket.getId() + "\n" + examTicket.getQuestion());
+        poll.setQuestion(formatQuestion);
         poll.setOptions(answers);
-
         poll.setCorrectOptionId(correctAnswer);
         poll.setType(pollType);
         poll.setExplanation(examTicket.getRightAnswer());
@@ -76,6 +82,8 @@ public class TelegramServiceImpl extends TelegramLongPollingBot implements Teleg
         try {
             execute(poll);
         } catch (TelegramApiException e) {
+            log.error("Произошло исключение, вводные данные. \n chatId - {},\n formatQuestion - {},\nanswers - {} ,\ncorrectAnswer - {},\npollType - {},\nexamTicket.getRightAnswer() - {}",
+                    chatId, formatQuestion, answers, correctAnswer, pollType, examTicket.getRightAnswer());
             e.printStackTrace();
         }
     }
@@ -83,7 +91,7 @@ public class TelegramServiceImpl extends TelegramLongPollingBot implements Teleg
     @Override
     public String createWelcomeMessage() {
         return """
-                Добро пожаловать! Этот бот создан с целью помочь вам освоить фреймворк Spring.
+                Добро пожаловать! Этот бот создан с целью помочь вам освоить фреймворк - Spring.
                 Здесь вы найдете квизы и подробные ответы по следующим темам:
                 
                 1. Spring MVC
@@ -91,17 +99,18 @@ public class TelegramServiceImpl extends TelegramLongPollingBot implements Teleg
                 3. Spring REST
                 4. Spring Boot
                 5. Spring Security
+                6. Spring Test
                 
                 На данный момент, доступно только одна тема "Контейнер, IoC, бины"
                 но работа идет над добавлением остальных тем.
                 
                 В боте реализованы основные команды:
-                /examtest получите случайный квиз-вопрос с 4 вариантами ответов.
-                /getdetailedticket получите случайный подробный ответ на квиз-вопрос.
-                /getanswerbyid получить подробный ответ на квиз вопрос по номеру.
+                /getquiz получите случайный квиз.
+                /getanswerticket получите случайный ответ.
+                /getanswerbyid получить ответ по номеру вопроса.
                 
-                Если у вас возникнут вопросы, пожелания или предложения по улучшению бота,
-                не стесняйтесь обращаться ко мне - @Vasiliy_s. Я буду рад вашей обратной связи!
+                Если у вас возникнут вопросы, пожелания или предложения по улучшению функционала,
+                не стесняйтесь обращаться ко мне - @Vasiliy_s. Я буду рад обратной связи!
                 """;
     }
 

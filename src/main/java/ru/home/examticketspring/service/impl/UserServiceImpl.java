@@ -1,5 +1,6 @@
-package ru.home.examticketspring.impl;
+package ru.home.examticketspring.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.home.examticketspring.model.TelegramUser;
 import ru.home.examticketspring.repository.TelegramUserRepository;
@@ -9,12 +10,9 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final TelegramUserRepository telegramUserRepository;
-
-    public UserServiceImpl(TelegramUserRepository telegramUserRepository) {
-        this.telegramUserRepository = telegramUserRepository;
-    }
 
     @Override
     public void addUser(TelegramUser telegramUser) {

@@ -1,6 +1,9 @@
-package ru.home.examticketspring.impl.handler;
+package ru.home.examticketspring.service.impl;
 
+import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -12,61 +15,54 @@ import ru.home.examticketspring.bot.state.TelegramBotState;
 import ru.home.examticketspring.model.ExamTicket;
 import ru.home.examticketspring.model.TelegramUser;
 import ru.home.examticketspring.service.*;
+import ru.home.examticketspring.utls.TelegramUserContainer;
 
 import java.time.LocalDate;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
 @Service
 @Log4j2
+@RequiredArgsConstructor
 public class IncomingMessageImpl implements IncomingMessageService {
-    private final TelegramService telegramService;
+    private TelegramService telegramService;
     private final HashMap<String, Consumer<Message>> commandMap = new HashMap<>();
-    private final List<Long> listUserId;
     private final UserService userService;
     @Value("${bot.userName}")
     private String botName;
     private final TelegramBotState botState;
     private final TicketService ticketService;
-    private final ProcessingService processingService;
-    public static final Map<Long, TelegramUser> statisticsUser = new ConcurrentHashMap<>();
+    private final ProcessingMessageService processingMessageService;
+    private final TestCommand testCommand;
+    private final GetChatId getChatId;
+    private final GetQuiz getQuiz;
+    private final GetAnswerTicket getAnswerTicket;
+    private final GetAnswerById getAnswerById;
 
-    public IncomingMessageImpl(@Lazy TelegramService telegramService, TestCommand testCommand,
-                               GetChatId getChatId,
-                               ExamTest examTest,
-                               GetDetailedTicket getDetailedTicket,
-                               UserService userService,
-                               GetAnswerById getAnswerById,
-                               TelegramBotState botState,
-                               TicketService ticketService,
-                               ProcessingService processingService) {
-        commandMap.put("/testcommand", testCommand);
-        commandMap.put("/getchatid", getChatId);
-        commandMap.put("/examtest", examTest);
-        commandMap.put("/getanswerbyid", getAnswerById);
-        commandMap.put("/getdetailedticket", getDetailedTicket);
-
+    @Lazy
+    @Autowired
+    public void setTelegramService(TelegramService telegramService) {
         this.telegramService = telegramService;
-        this.userService = userService;
-        this.botState = botState;
-        this.ticketService = ticketService;
-        this.processingService = processingService;
-
-        listUserId = userService.getAllUserId();
-        initializeStaticsMap();
     }
 
-    public void handleMessage(Update update) {
+    @PostConstruct
+    public void init() {
+        TelegramUserContainer.initializeStaticsMap(userService.getAllUsers());
+        commandMap.put("/testcommand", testCommand);
+        commandMap.put("/getchatid", getChatId);
+        commandMap.put("/getquiz", getQuiz);
+        commandMap.put("/getanswerbyid", getAnswerById);
+        commandMap.put("/getanswerticket", getAnswerTicket);
+    }
+
+    public void handlerMessage(Update update) {
         Message message = update.getMessage();
         Long userId = message.getFrom().getId();
         String text = message.getText();
 
-        updateUserActivity(userId);
+        TelegramUserContainer.updateUserActivity(userId);
 
-        if (!listUserId.contains(userId)) {
+        if (!TelegramUserContainer.isNewUsers(userId)) {
             createNewUser(message.getFrom());
             telegramService.sendTextMessage(telegramService.createWelcomeMessage(), String.valueOf(message.getChatId()));
         }
@@ -84,7 +80,7 @@ public class IncomingMessageImpl implements IncomingMessageService {
                         throwIfNumberIsNotInRange(rowsCount, idRecordFromUser);
 
                         ExamTicket examTicket = ticketService.findById(idRecordFromUser).get();
-                        String formattedText = processingService.formatExamTicket(examTicket);
+                        String formattedText = processingMessageService.formatExamTicket(examTicket);
 
                         telegramService.sendTextMessage(formattedText, userId.toString());
                         botState.stateNormal();
@@ -107,22 +103,8 @@ public class IncomingMessageImpl implements IncomingMessageService {
         }
     }
 
-    @Override
-    public synchronized void updateUserActivity(Long chatId) {
-        TelegramUser user = statisticsUser.get(chatId);
-        if (!user.getLastActiveDate().isEqual(LocalDate.now())) {
-            user.setLastActiveDate(LocalDate.now());
-        }
-        user.setCounter(user.getCounter() + 1);
-    }
-
     private String replaceNullOrEmptyWithUnknown(String field) {
         return field == null || field.isEmpty() ? "unknown" : field;
-    }
-
-    private void initializeStaticsMap() {
-        List<TelegramUser> allUsers = userService.getAllUsers();
-        allUsers.forEach(user -> statisticsUser.put(user.getUserId(), user));
     }
 
     private void createNewUser(User user) {
@@ -140,9 +122,9 @@ public class IncomingMessageImpl implements IncomingMessageService {
         newUser.setLastName(lastName);
 
         newUser.setLastActiveDate(LocalDate.now());
-        newUser.setCounter(0);
+        newUser.setCounter(1);
 
-        listUserId.add(user.getId());
+        TelegramUserContainer.statisticsUser.put(user.getId(), newUser);
         userService.addUser(newUser);
         log.info("Добавлен новый пользователь\n" + userName + "\n" + user.getId());
     }
