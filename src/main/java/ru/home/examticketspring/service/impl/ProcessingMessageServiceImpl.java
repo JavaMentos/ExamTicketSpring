@@ -2,7 +2,7 @@ package ru.home.examticketspring.service.impl;
 
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
-import ru.home.examticketspring.model.ExamTicket;
+import ru.home.examticketspring.model.SpringTicket;
 import ru.home.examticketspring.service.ProcessingMessageService;
 import ru.home.examticketspring.service.TicketService;
 
@@ -19,9 +19,9 @@ public class ProcessingMessageServiceImpl implements ProcessingMessageService {
         this.ticketService = ticketService;
     }
 
-    public ExamTicket getRandomTicket() {
+    public SpringTicket getRandomTicket() {
         int numberLine = randomNumber();
-        Optional<ExamTicket> examTicket = ticketService.findById(numberLine);
+        Optional<SpringTicket> examTicket = ticketService.findById(numberLine);
         if (examTicket.isPresent()) {
             return examTicket.get();
         }
@@ -34,11 +34,11 @@ public class ProcessingMessageServiceImpl implements ProcessingMessageService {
         return random.nextInt(count) + 1;
     }
 
-    public String formatExamTicket(ExamTicket examTicket) {
-        String fullAnswer = examTicket.getFullAnswer();
-        String questionTopic = examTicket.getQuestionTopic();
-        String question = examTicket.getQuestion();
-        long id = examTicket.getId();
+    public String formatExamTicket(SpringTicket springTicket) {
+        String fullAnswer = springTicket.getFullAnswer();
+        String questionTopic = springTicket.getQuestionTopic();
+        String question = springTicket.getQuestion();
+        long id = springTicket.getId();
         return String.format("№%d %nТема - %s%n%nВопрос - %s%n%nОтвет%n%s", id, questionTopic, question, fullAnswer);
     }
 }

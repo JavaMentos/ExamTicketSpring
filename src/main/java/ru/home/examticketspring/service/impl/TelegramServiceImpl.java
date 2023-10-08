@@ -11,7 +11,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import ru.home.examticketspring.model.ExamTicket;
+import ru.home.examticketspring.model.SpringTicket;
 import ru.home.examticketspring.service.IncomingMessageService;
 import ru.home.examticketspring.service.TelegramService;
 
@@ -56,20 +56,22 @@ public class TelegramServiceImpl extends TelegramLongPollingBot implements Teleg
         return token;
     }
 
-    public void sendQuizPoll(ExamTicket examTicket, String chatId) {
+    public void sendQuizPoll(SpringTicket springTicket, String chatId) {
         String pollType = "quiz";
 
         List<String> answers = new ArrayList<>();
-        answers.add(examTicket.getAnswer1());
-        answers.add(examTicket.getAnswer2());
-        answers.add(examTicket.getAnswer3());
-        answers.add(examTicket.getAnswer4());
+        answers.add(springTicket.getAnswer1());
+        answers.add(springTicket.getAnswer2());
+        answers.add(springTicket.getAnswer3());
+        answers.add(springTicket.getAnswer4());
+
+        String rightAnswer = springTicket.getAnswer1();
 
         Collections.shuffle(answers);
 
-        int correctAnswer = answers.indexOf(examTicket.getRightAnswer());
+        int correctAnswer = answers.indexOf(rightAnswer);
 
-        String formatQuestion = String.format("№ %d%n%s", examTicket.getId(), examTicket.getQuestion());
+        String formatQuestion = String.format("№ %d%n%s", springTicket.getId(), springTicket.getQuestion());
 
         SendPoll poll = new SendPoll();
         poll.setChatId(chatId);
@@ -77,13 +79,13 @@ public class TelegramServiceImpl extends TelegramLongPollingBot implements Teleg
         poll.setOptions(answers);
         poll.setCorrectOptionId(correctAnswer);
         poll.setType(pollType);
-        poll.setExplanation(examTicket.getRightAnswer());
+        poll.setExplanation(rightAnswer);
 
         try {
             execute(poll);
         } catch (TelegramApiException e) {
             log.error("Произошло исключение, вводные данные. \n chatId - {},\n formatQuestion - {},\nanswers - {} ,\ncorrectAnswer - {},\npollType - {},\nexamTicket.getRightAnswer() - {}",
-                    chatId, formatQuestion, answers, correctAnswer, pollType, examTicket.getRightAnswer());
+                    chatId, formatQuestion, answers, correctAnswer, pollType, rightAnswer);
             e.printStackTrace();
         }
     }

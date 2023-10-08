@@ -12,7 +12,7 @@ import java.time.LocalDate;
 
 @Transactional
 @Repository
-public interface TelegramUserRepository extends JpaRepository<TelegramUser, Long> {
+public interface TelegramUsersRepository extends JpaRepository<TelegramUser, Long> {
     @Modifying
     @Query("update TelegramUser t set t.lastActiveDate = :lastActiveDate where t.userId = :chatId")
     void updateLastActiveDate(@Param("chatId") Long chatId, @Param("lastActiveDate") LocalDate lastActiveDate);

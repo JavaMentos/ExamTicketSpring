@@ -5,27 +5,23 @@ import lombok.Getter;
 
 @Entity
 @Getter
-@Table(name = "exam_tickets")
-public class ExamTicket {
+@Table(name = "spring_tickets")
+public class SpringTicket {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    @Column(name = "question_topic")
+    @Column(name = "question_topic", length = 100)
     private String questionTopic;
-    @Column(name = "question")
+    @Column(name = "question", length = 150)
     private String question;
-    @Column(name = "answer_1")
+    @Column(name = "answer_1", length = 100)
     private String answer1;
-    @Column(name = "answer_2")
+    @Column(name = "answer_2", length = 100)
     private String answer2;
-    @Column(name = "answer_3")
+    @Column(name = "answer_3", length = 100)
     private String answer3;
-    @Column(name = "answer_4")
+    @Column(name = "answer_4", length = 100)
     private String answer4;
-    @Column(name = "right_answer")
-    private String rightAnswer;
     @Column(name = "full_answer", length = 2500)
     private String fullAnswer;
-    @Column(name = "correct_answer")
-    private int correctAnswer;
 }

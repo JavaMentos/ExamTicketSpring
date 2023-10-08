@@ -1,8 +1,8 @@
 package ru.home.examticketspring.service;
 
-import ru.home.examticketspring.model.ExamTicket;
+import ru.home.examticketspring.model.SpringTicket;
 
 public interface ProcessingMessageService {
-    ExamTicket getRandomTicket();
-    String formatExamTicket(ExamTicket examTicket);
+    SpringTicket getRandomTicket();
+    String formatExamTicket(SpringTicket springTicket);
 }

@@ -12,7 +12,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 import ru.home.examticketspring.bot.command.*;
 import ru.home.examticketspring.bot.state.TelegramBotState;
-import ru.home.examticketspring.model.ExamTicket;
+import ru.home.examticketspring.model.SpringTicket;
 import ru.home.examticketspring.model.TelegramUser;
 import ru.home.examticketspring.service.*;
 import ru.home.examticketspring.utls.TelegramUserContainer;
@@ -79,8 +79,8 @@ public class IncomingMessageImpl implements IncomingMessageService {
 
                         throwIfNumberIsNotInRange(rowsCount, idRecordFromUser);
 
-                        ExamTicket examTicket = ticketService.findById(idRecordFromUser).get();
-                        String formattedText = processingMessageService.formatExamTicket(examTicket);
+                        SpringTicket springTicket = ticketService.findById(idRecordFromUser).get();
+                        String formattedText = processingMessageService.formatExamTicket(springTicket);
 
                         telegramService.sendTextMessage(formattedText, userId.toString());
                         botState.stateNormal();
