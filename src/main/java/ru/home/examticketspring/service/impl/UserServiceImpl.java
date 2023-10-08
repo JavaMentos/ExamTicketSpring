@@ -8,6 +8,7 @@ import ru.home.examticketspring.service.UserService;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -41,7 +42,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public TelegramUser findByUserId(long userId) {
+    public Optional<TelegramUser> findByUserId(long userId) {
         return telegramUsersRepository.findByUserId(userId);
     }
 }

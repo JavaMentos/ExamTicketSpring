@@ -29,6 +29,7 @@ public class GetChatId implements Consumer<Message> {
     public void accept(Message message) {
         String format = String.format("ID chat: %s %nUser ID: %s", message.getChatId(), message.getFrom().getId());
         telegramService.sendTextMessage(format, message.getChatId().toString());
-        log.info("Пользователь: id - {}, логин - {}, Выполнил команду - {}", message.getFrom().getId(), message.getFrom().getUserName(), getClass().getSimpleName());
+        log.info("Пользователь: id - {}, логин - {}, Выполнил команду - {}",
+                message.getFrom().getId(), message.getFrom().getUserName(), getClass().getSimpleName());
     }
 }

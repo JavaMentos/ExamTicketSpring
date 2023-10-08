@@ -3,6 +3,9 @@ package ru.home.examticketspring.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 
+/**
+ * Класс SpringTicket представляет сущность для хранения информации о тикете в базе данных.
+ */
 @Entity
 @Getter
 @Table(name = "spring_tickets")

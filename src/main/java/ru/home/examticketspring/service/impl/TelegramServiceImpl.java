@@ -84,7 +84,8 @@ public class TelegramServiceImpl extends TelegramLongPollingBot implements Teleg
         try {
             execute(poll);
         } catch (TelegramApiException e) {
-            log.error("Произошло исключение, вводные данные. \n chatId - {},\n formatQuestion - {},\nanswers - {} ,\ncorrectAnswer - {},\npollType - {},\nexamTicket.getRightAnswer() - {}",
+            log.error("Произошло исключение, вводные данные. \n chatId - {},\n formatQuestion - {}," +
+                            "\nanswers - {} ,\ncorrectAnswer - {},\npollType - {},\nexamTicket.getRightAnswer() - {}",
                     chatId, formatQuestion, answers, correctAnswer, pollType, rightAnswer);
             e.printStackTrace();
         }

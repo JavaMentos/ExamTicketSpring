@@ -9,7 +9,12 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.home.examticketspring.model.TelegramUser;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
+/**
+ * Интерфейс TelegramUsersRepository представляет репозиторий
+ * для доступа к данным о пользователе Telegram в базе данных.
+ */
 @Transactional
 @Repository
 public interface TelegramUsersRepository extends JpaRepository<TelegramUser, Long> {
@@ -21,5 +26,5 @@ public interface TelegramUsersRepository extends JpaRepository<TelegramUser, Lon
     @Query("update TelegramUser t set t.counter = :counter where t.userId = :chatId")
     void updateCounter(@Param("chatId") Long chatId, @Param("counter") Integer counter);
 
-    TelegramUser findByUserId(long userId);
+    Optional<TelegramUser> findByUserId(long userId);
 }

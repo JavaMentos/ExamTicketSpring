@@ -1,17 +1,18 @@
 package ru.home.examticketspring.model;
 
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import jakarta.persistence.*;
-import lombok.ToString;
-
 import java.time.LocalDate;
 
+/**
+ * Класс TelegramUser представляет сущность для хранения информации
+ * о пользователе Telegram в базе данных.
+ */
 @Entity
 @Getter
 @Setter
-@ToString
 @Table(name = "telegram_users")
 public class TelegramUser {
     @Id

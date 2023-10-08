@@ -12,17 +12,30 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 import ru.home.examticketspring.service.impl.TelegramServiceImpl;
 
+/**
+ * Класс BotInitializer инициализирует и регистрирует телеграм-бота при запуске приложения.
+ */
 @Service
 @Log4j2
 public class BotInitializer {
     private TelegramServiceImpl telegramBot;
 
+    /**
+     * Устанавливает экземпляр TelegramServiceImpl в BotInitializer.
+     *
+     * @param telegramBot экземпляр TelegramServiceImpl для установки
+     */
     @Autowired
     @Lazy
     public void setTelegramBot(TelegramServiceImpl telegramBot) {
         this.telegramBot = telegramBot;
     }
 
+    /**
+     * Метод init инициализирует и регистрирует телеграм-бота при запуске приложения.
+     *
+     * @throws TelegramApiException если возникает ошибка при работе с Telegram API
+     */
     @EventListener({ContextRefreshedEvent.class})
     public void init() throws TelegramApiException {
         TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);

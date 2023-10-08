@@ -19,6 +19,7 @@ import ru.home.examticketspring.utls.TelegramUserContainer;
 
 import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 @Service
@@ -67,32 +68,28 @@ public class IncomingMessageImpl implements IncomingMessageService {
             telegramService.sendTextMessage(telegramService.createWelcomeMessage(), String.valueOf(message.getChatId()));
         }
 
-        if (botState.getUserIdForState() == message.getFrom().getId()) {
-            switch (botState.getState()) {
-                case AWAITING_ID:
+        if (botState.getUserIdForState() == message.getFrom().getId() &&
+                botState.getState() == TelegramBotState.BotState.AWAITING_ID ) {
 
-                    try {
-                        throwElseNotNumberOrNull(text);
+                try {
+                    throwElseNotNumberOrNull(text);
 
-                        long rowsCount = ticketService.count();
-                        long idRecordFromUser = Long.parseLong(text);
+                    long rowsCount = ticketService.count();
+                    long idRecordFromUser = Long.parseLong(text);
 
-                        throwIfNumberIsNotInRange(rowsCount, idRecordFromUser);
+                    throwIfNumberIsNotInRange(rowsCount, idRecordFromUser);
 
-                        SpringTicket springTicket = ticketService.findById(idRecordFromUser).get();
-                        String formattedText = processingMessageService.formatExamTicket(springTicket);
-
+                    Optional<SpringTicket> springTicket = ticketService.findById(idRecordFromUser);
+                    if (springTicket.isPresent()) {
+                        String formattedText = processingMessageService.formatExamTicket(springTicket.get());
                         telegramService.sendTextMessage(formattedText, userId.toString());
-                        botState.stateNormal();
-                        break;
-                    } catch (IllegalArgumentException e) {
-                        telegramService.sendTextMessage(e.getMessage(), userId.toString());
                         botState.stateNormal();
                     }
 
-                default:
-                    break;
-            }
+                } catch (IllegalArgumentException e) {
+                    telegramService.sendTextMessage(e.getMessage(), userId.toString());
+                    botState.stateNormal();
+                }
         }
 
         String textHasMessage = message.getText().replace(botName, "");
