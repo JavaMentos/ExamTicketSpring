@@ -33,12 +33,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void updateLastActiveDate(long chatId, LocalDate lastActiveDate) {
-        telegramUsersRepository.updateLastActiveDate(chatId, lastActiveDate);
+        telegramUsersRepository.updateLastActiveDateByUserId(chatId, lastActiveDate);
     }
 
     @Override
     public void updateCounter(long chatId, Integer counter) {
-        telegramUsersRepository.updateCounter(chatId, counter);
+        telegramUsersRepository.updateCounterByUserId(chatId, counter);
     }
 
     @Override

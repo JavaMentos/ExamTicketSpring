@@ -1,36 +1,23 @@
-create table public.telegram_users
+CREATE TABLE public.telegram_users
 (
-    id         integer default nextval('users_id_seq'::regclass) not null
-        constraint users_pkey
-            primary key,
-    user_id    bigint
-        constraint users_user_id_key
-            unique,
-    user_name  varchar,
-    first_name varchar,
-    last_name  varchar,
-    local_date date,
-    counter    integer
+    id         SERIAL PRIMARY KEY,
+    user_id    BIGINT,
+    user_name  VARCHAR(50),
+    first_name VARCHAR(50),
+    last_name  VARCHAR(50),
+    local_date DATE,
+    counter    INTEGER,
+    CONSTRAINT unique_user_id UNIQUE (user_id)
 );
 
-create table public.exam_tickets
+CREATE TABLE public.exam_tickets
 (
-    id             serial
-        primary key,
-    question_topic varchar not null,
-    question       varchar not null,
-    answer_1       varchar not null,
-    answer_2       varchar not null,
-    answer_3       varchar not null,
-    answer_4       varchar not null,
-    right_answer   varchar not null,
-    full_answer    varchar(2500),
-    correct_answer integer
+    id             SERIAL PRIMARY KEY,
+    question_topic VARCHAR(100) NOT NULL,
+    question       VARCHAR(150) NOT NULL,
+    answer_1       VARCHAR(100) NOT NULL,
+    answer_2       VARCHAR(100) NOT NULL,
+    answer_3       VARCHAR(100) NOT NULL,
+    answer_4       VARCHAR(100) NOT NULL,
+    full_answer    VARCHAR(2500)
 );
-
-create trigger update_correct_answer_trigger
-    before insert
-    on public.exam_tickets
-    for each row
-    execute procedure public.update_correct_answer();
-
