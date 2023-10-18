@@ -19,12 +19,12 @@ import java.util.Optional;
 @Repository
 public interface TelegramUsersRepository extends JpaRepository<TelegramUser, Long> {
     @Modifying
-    @Query("update TelegramUser t set t.lastActiveDate = :lastActiveDate where t.userId = :chatId")
-    void updateLastActiveDateByUserId(@Param("chatId") Long chatId, @Param("lastActiveDate") LocalDate lastActiveDate);
+    @Query("update TelegramUser t set t.lastActiveDate = :lastActiveDate where t.userId = :userId")
+    void updateLastActiveDateByUserId(@Param("userId") Long chatId, @Param("lastActiveDate") LocalDate lastActiveDate);
 
     @Modifying
-    @Query("update TelegramUser t set t.counter = :counter where t.userId = :chatId")
-    void updateCounterByUserId(@Param("chatId") Long chatId, @Param("counter") Integer counter);
+    @Query("update TelegramUser t set t.counter = :counter where t.userId = :userId")
+    void updateCounterByUserId(@Param("userId") Long chatId, @Param("counter") Integer counter);
 
     Optional<TelegramUser> findByUserId(long userId);
 }
