@@ -22,12 +22,7 @@ public interface UserService {
      * @return Список объектов TelegramUser, представляющих всех пользователей.
      */
     List<TelegramUser> getAllUsers();
-    /**
-     * Метод getAllUserId() используется для получения списка идентификаторов всех пользователей.
-     *
-     * @return Список идентификаторов (тип Long) всех пользователей.
-     */
-    List<Long> getAllUserId();
+
     /**
      * Метод updateLastActiveDate() используется для обновления даты последней активности пользователя.
      *

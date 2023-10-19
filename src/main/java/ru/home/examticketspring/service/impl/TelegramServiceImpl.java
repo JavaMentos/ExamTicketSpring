@@ -42,7 +42,8 @@ public class TelegramServiceImpl extends TelegramLongPollingBot implements Teleg
 
         if (update.hasMessage() && message.hasText()) {
             incomingMessage.handlerMessage(update);
-            log.info(message.getFrom().getUserName() + " - начал взаимодействие с ботом. Текст: " + message.getText());
+            log.info("{} - начал взаимодействие с ботом. Текст: {}",
+                    message.getFrom().getUserName(), message.getText());
         }
     }
 

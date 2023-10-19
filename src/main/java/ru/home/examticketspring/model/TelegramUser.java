@@ -1,8 +1,7 @@
 package ru.home.examticketspring.model;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 import java.time.LocalDate;
 
@@ -11,8 +10,7 @@ import java.time.LocalDate;
  * о пользователе Telegram в базе данных.
  */
 @Entity
-@Getter
-@Setter
+@Data
 @Table(name = "telegram_users")
 public class TelegramUser {
     @Id
@@ -27,7 +25,8 @@ public class TelegramUser {
     @Column(name = "last_name", length = 50)
     private String lastName;
     @Column(name = "last_active_date")
-    private LocalDate lastActiveDate;
+    @Temporal(TemporalType.DATE)
+    private LocalDate  lastActiveDate;
     @Column(name = "counter")
     private Integer counter;
 }

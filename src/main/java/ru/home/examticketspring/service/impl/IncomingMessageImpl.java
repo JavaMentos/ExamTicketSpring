@@ -40,6 +40,8 @@ public class IncomingMessageImpl implements IncomingMessageService {
     private final GetAnswerTicket getAnswerTicket;
     private final GetAnswerById getAnswerById;
 
+    private static final int DEFAULT_COUNT = 1;
+
     @Lazy
     @Autowired
     public void setTelegramService(TelegramService telegramService) {
@@ -61,12 +63,13 @@ public class IncomingMessageImpl implements IncomingMessageService {
         Long userId = message.getFrom().getId();
         String text = message.getText();
 
-        TelegramUserContainer.updateUserActivity(userId);
-
-        if (!TelegramUserContainer.isNewUsers(userId)) {
+        if (TelegramUserContainer.isNewUsers(userId)) {
             createNewUser(message.getFrom());
-            telegramService.sendTextMessage(telegramService.createWelcomeMessage(), String.valueOf(message.getChatId()));
+            telegramService.sendTextMessage(telegramService.createWelcomeMessage(),
+                    String.valueOf(message.getChatId()));
         }
+
+        TelegramUserContainer.updateUserActivity(userId);
 
         if (botState.getUserIdForState() == message.getFrom().getId() &&
                 botState.getState() == TelegramBotState.BotState.AWAITING_ID ) {
@@ -87,12 +90,16 @@ public class IncomingMessageImpl implements IncomingMessageService {
                     }
 
                 } catch (IllegalArgumentException e) {
+                    log.warn("Ошибка {} от пользователя - {}", e.getMessage(), userId.toString());
                     telegramService.sendTextMessage(e.getMessage(), userId.toString());
                     botState.stateNormal();
                 }
         }
 
-        String textHasMessage = message.getText().replace(botName, "");
+        String textHasMessage = message.getText()
+                .replace(botName, "")
+                .replace("@","");
+
         Consumer<Message> messageConsumer = commandMap.get(textHasMessage);
 
         if (messageConsumer != null) {
@@ -119,23 +126,23 @@ public class IncomingMessageImpl implements IncomingMessageService {
         newUser.setLastName(lastName);
 
         newUser.setLastActiveDate(LocalDate.now());
-        newUser.setCounter(1);
+        newUser.setCounter(DEFAULT_COUNT);
 
-        TelegramUserContainer.statisticsUser.put(user.getId(), newUser);
+        TelegramUserContainer.addUser(newUser);
         userService.addUser(newUser);
-        log.info("Добавлен новый пользователь\n" + userName + "\n" + user.getId());
+        log.info("Добавлен новый пользователь - {}, {}", userName, user.getId());
     }
 
     private void throwElseNotNumberOrNull(String text) {
         if (text == null || !text.matches("\\d+")) {
-            log.warn("Поддерживаются только цифры, ввели " + text);
+            log.warn("Поддерживаются только цифры, ввели {}", text);
             throw new IllegalArgumentException("Поддерживаются только цифры, вы ввели " + text);
         }
     }
 
     private void throwIfNumberIsNotInRange(long rowsCount, long idRecordFromUser) {
         if (idRecordFromUser > rowsCount || idRecordFromUser < 1) {
-            log.warn("Введено не корректное число, всего строк в бд " + rowsCount + ", введено " + idRecordFromUser);
+            log.warn("Введено не корректное число, всего строк в бд {}, введено {}", rowsCount, idRecordFromUser);
             throw new IllegalArgumentException("Число должно быть положительным и не больше " + rowsCount);
         }
     }

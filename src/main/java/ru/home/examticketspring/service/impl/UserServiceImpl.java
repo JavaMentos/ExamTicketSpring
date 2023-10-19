@@ -26,12 +26,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<Long> getAllUserId() {
-        List<TelegramUser> allUsers = getAllUsers();
-        return allUsers.stream().map(TelegramUser::getUserId).toList();
-    }
-
-    @Override
     public void updateLastActiveDate(long chatId, LocalDate lastActiveDate) {
         telegramUsersRepository.updateLastActiveDateByUserId(chatId, lastActiveDate);
     }

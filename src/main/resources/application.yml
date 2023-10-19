@@ -18,8 +18,6 @@ management:
           show-details: always
 
 spring:
-  config:
-    import: optional:file:.env[.properties]
   datasource:
     hikari: # пулом соединений HikariCP, который проверяет соединение с базой данных
       max-lifetime: 20000 # максимального времени жизни соединения 20 секунд
