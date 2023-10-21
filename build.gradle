@@ -29,23 +29,23 @@ bootJar {
 }
 
 dependencies {
-    implementation "org.springframework.boot:spring-boot-devtools:${springDevtools}"
-    implementation "org.springframework.boot:spring-boot-starter:${springStarter}"
-    implementation "org.springframework.boot:spring-boot-starter-web:${springStarter}"
-    implementation "org.springframework.boot:spring-boot-starter-actuator:${springBootStarterActuator}"
-    implementation "org.springframework.boot:spring-boot-starter-log4j2:${springStarter}"
+    //spring
+    implementation "org.springframework.boot:spring-boot-starter"
+    implementation "org.springframework.boot:spring-boot-starter-web"
+    implementation "org.springframework.boot:spring-boot-starter-actuator"
+    implementation "org.springframework.boot:spring-boot-starter-log4j2"
+    testImplementation "org.springframework.boot:spring-boot-starter-test"
+    implementation "org.springframework.boot:spring-boot-starter-data-jpa"
     implementation "org.telegram:telegrambots-spring-boot-starter:${telegrambotsSpring}"
+
+    //lombok
     annotationProcessor "org.projectlombok:lombok:${lombok}"
     compileOnly "org.projectlombok:lombok:${lombok}"
-    implementation "org.springframework.boot:spring-boot-starter-data-jpa:${springDataJpa}"
+
+    //bd
     implementation "org.postgresql:postgresql:${postgresql}"
 
-    testImplementation "org.springframework.boot:spring-boot-starter-test:${springStarterTest}"
-    testImplementation "org.junit.jupiter:junit-jupiter-api:${junitJupiter}"
     implementation "io.micrometer:micrometer-registry-prometheus:${micrometerRegistryPrometheus}"
-
-    implementation 'jakarta.persistence:jakarta.persistence-api:3.1.0'
-
 }
 
 test {

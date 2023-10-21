@@ -2,6 +2,7 @@ package ru.home.examticketspring.config;
 
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
@@ -15,7 +16,7 @@ import ru.home.examticketspring.service.impl.TelegramServiceImpl;
 /**
  * Класс BotInitializer инициализирует и регистрирует телеграм-бота при запуске приложения.
  */
-@Service
+@Configuration
 @Log4j2
 public class BotInitializer {
     private TelegramServiceImpl telegramBot;
